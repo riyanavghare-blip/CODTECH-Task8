@@ -1,0 +1,65 @@
+# ==========================================
+# 📘 GPT-4 Text Generation Demonstration
+# ==========================================
+# This notebook demonstrates text generation with OpenAI's GPT-4 model.
+# You can run it in Google Colab or Jupyter Notebook.
+
+# ---- Step 1: Install Dependencies ----
+!pip install --quiet openai
+
+# ---- Step 2: Import Libraries ----
+from openai import OpenAI
+import os
+
+# ---- Step 3: Enter Your API Key ----
+# For Colab: Use the input() function so your key isn't stored in the notebook.
+os.environ["OPENAI_API_KEY"] = input("🔑 Enter your OpenAI API key: ")
+
+client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+
+# ---- Step 4: Define a Text Generation Function ----
+def generate_text(prompt, temperature=0.7, max_tokens=300):
+    """
+    Generate text using OpenAI GPT-4.
+    Args:
+        prompt (str): The user's text prompt
+        temperature (float): Controls creativity (0.0 = focused, 1.0 = creative)
+        max_tokens (int): Maximum length of the generated output
+    """
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "You are a helpful AI assistant."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=temperature,
+        max_tokens=max_tokens
+    )
+    return response.choices[0].message.content.strip()
+
+# ---- Step 5: Try Example Prompts ----
+example_prompts = [
+    "Write a short poem about the sunrise.",
+    "Explain quantum computing in simple terms.",
+    "Generate a creative story about a robot who learns to paint.",
+    "Summarize the benefits of exercise in one paragraph.",
+    "Write Python code that reverses a string."
+]
+
+print("🎨 Example Text Generations:\n")
+for i, p in enumerate(example_prompts, 1):
+    print(f"🧩 Example {i}: {p}")
+    print(generate_text(p))
+    print("-" * 60)
+
+# ---- Step 6: Interactive Prompt ----
+print("\n💬 Now it’s your turn!")
+while True:
+    user_prompt = input("\nEnter a prompt (or 'quit' to exit): ")
+    if user_prompt.lower() in ['quit', 'exit']:
+        break
+    temp = float(input("Set temperature (0.0-1.0): ") or 0.7)
+    max_toks = int(input("Set max tokens (e.g., 200): ") or 200)
+
+    print("\n✨ GPT-4 Response:\n")
+    print(generate_text(user_prompt, temperature=temp, max_tokens=max_toks))
